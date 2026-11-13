@@ -1,0 +1,38 @@
+{
+  "name": "ShamsElber light. DMX",
+  "short_name": "ShamsElber light. DMX",
+  "description": "ShamsElber light. DMX - Professional Stage & Studio Lighting Plot, Camera Blocking, Sony Creative Look & Automated DMX512 Patch Planner for DOPs & Lighting Programmers.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#090d16",
+  "theme_color": "#f59e0b",
+  "categories": ["productivity", "utilities", "photo", "video"],
+  "icons": [
+    {
+      "src": "./icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "./FB_IMG_1794520985975.jpg",
+      "sizes": "1181x1181",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

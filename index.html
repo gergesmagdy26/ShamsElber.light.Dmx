@@ -1,0 +1,1651 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#f59e0b" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="description" content="ShamsElber light. DMX - Studio Lighting Plot, Camera Blocking, Sony ST Creative Look & Automated DMX512 Patch Planner." />
+  <title>ShamsElber light. DMX</title>
+  <link rel="manifest" href="./manifest.json?v=3" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="./css/styles.css?v=5.5" />
+  <link rel="stylesheet" href="./css/workspace-ui.css?v=5.5" />
+  <link rel="stylesheet" href="./css/settings.css?v=5.5" />
+  <link rel="stylesheet" href="./css/paper.css?v=5.5" />
+  <link rel="stylesheet" href="./css/three-view.css?v=5.5" />
+</head>
+<body>
+
+  <!-- ========================================================================
+       1. AUTHENTICATION SCREEN (ROLE-BASED LOGIN)
+       ======================================================================== -->
+  <section id="authScreen" class="auth-screen" dir="ltr">
+    <div class="auth-card">
+      <button type="button" class="auth-theme-btn" onclick="CineApp.toggleTheme()" title="Toggle Dark / Light Theme">
+        <span class="theme-toggle-icon">☀️</span>
+      </button>
+
+      <div class="auth-brand">
+        <div class="auth-logo-frame">
+          <img src="./FB_IMG_1794520985975.jpg" alt="ShamsElber light. DMX Logo" class="app-logo-img" />
+        </div>
+        <h1>ShamsElber light. DMX</h1>
+        <p>Lighting &amp; DMX Studio Suite</p>
+      </div>
+
+      <form id="authForm" class="auth-form" onsubmit="CineApp.handleAuthSubmit(event)">
+        <div class="form-group">
+          <label for="authUsername">User</label>
+          <input type="text" id="authUsername" class="form-control auth-input" placeholder="Enter user" required autocomplete="username" />
+        </div>
+
+        <div class="form-group">
+          <label for="authPassword">Password</label>
+          <input type="password" id="authPassword" class="form-control auth-input" placeholder="••••••••" required autocomplete="current-password" />
+        </div>
+
+        <div id="authErrorMsg" class="hidden auth-error-msg"></div>
+
+        <button type="submit" id="authSubmitBtn" class="btn auth-submit-btn btn-block">
+          Sign In
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        <span>Offline Studio Suite</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       2. MAIN DASHBOARD (SECTIONS + ADMIN USERS MANAGER)
+       ======================================================================== -->
+  <section id="dashboardScreen" class="dashboard-screen hidden">
+    <header class="dash-header">
+      <div class="dash-brand" dir="ltr">
+        <img src="./FB_IMG_1794520985975.jpg" alt="Logo" class="app-logo-img" />
+        <div>
+          <div class="dash-brand-title">ShamsElber light. DMX</div>
+        </div>
+      </div>
+
+      <div class="dash-user-bar">
+        <!-- Global Dark / Light Theme Toggle Button (Update #9) -->
+        <button type="button" class="btn btn-secondary" onclick="CineApp.toggleTheme()" title="وضع دارك / لايت (Dark / Light Theme)">
+          <span class="theme-toggle-icon">☀️</span> <span class="theme-toggle-label">Light / Dark</span>
+        </button>
+        <button type="button" id="pwaInstallBtn" class="btn btn-emerald hidden" onclick="CineApp.installPWA()">
+          📲 تثبيت التطبيق (Install App)
+        </button>
+        <span id="dashUserBadge" class="user-pill">👤 DOP</span>
+        <button type="button" class="btn btn-danger" onclick="CineApp.handleLogout()">تسجيل خروج (Logout)</button>
+      </div>
+    </header>
+
+    <!-- Primary Dashboard Sections Navigation -->
+    <nav class="dash-nav-grid">
+      <button type="button" id="navBtnNewProject" class="dash-nav-card active" onclick="CineApp.switchDashboardSection('new_project')">
+        <div class="dash-nav-icon">➕</div>
+        <div class="dash-nav-text">
+          <h3>Create New Project</h3>
+          <span>1. مشروع جديد</span>
+        </div>
+      </button>
+
+      <button type="button" id="navBtnSavedProjects" class="dash-nav-card" onclick="CineApp.switchDashboardSection('saved_projects')">
+        <div class="dash-nav-icon">📂</div>
+        <div class="dash-nav-text">
+          <h3>Project History</h3>
+          <span>2. سجل المشاريع (<span id="savedProjectsCount">0</span>)</span>
+        </div>
+      </button>
+
+      <button type="button" id="navBtnPaperProject" class="dash-nav-card" onclick="CineApp.switchDashboardSection('paper_project')">
+        <div class="dash-nav-icon">📋</div>
+        <div class="dash-nav-text">
+          <h3>Paper Project</h3>
+          <span>3. مشروع ورقي (Light &amp; DMX)</span>
+        </div>
+      </button>
+
+      <button type="button" id="navBtnEquipment" class="dash-nav-card" onclick="CineApp.switchDashboardSection('equipment_manager')">
+        <div class="dash-nav-icon">💡</div>
+        <div class="dash-nav-text">
+          <h3>Equipment Manager</h3>
+          <span>4. قائمة المعدات</span>
+        </div>
+      </button>
+
+      <button type="button" id="navBtnVenues" class="dash-nav-card" onclick="CineApp.switchDashboardSection('venues_manager')">
+        <div class="dash-nav-icon">🏛️</div>
+        <div class="dash-nav-text">
+          <h3>Venues Manager</h3>
+          <span>5. قائمة الأماكن</span>
+        </div>
+      </button>
+
+      <button type="button" id="navBtnUsers" class="dash-nav-card hidden" onclick="CineApp.switchDashboardSection('users_manager')">
+        <div class="dash-nav-icon">👥</div>
+        <div class="dash-nav-text">
+          <h3>Users &amp; Permissions</h3>
+          <span>6. إدارة المستخدمين (<span id="usersTotalCount">1</span>)</span>
+        </div>
+      </button>
+    </nav>
+
+    <!-- Dashboard Dynamic Content Area -->
+    <main class="dash-content">
+      <!-- SECTION 1: مشروع جديد (Create New Project) -->
+      <div id="secNewProject" class="dash-section">
+        <div class="section-header-bar">
+          <div>
+            <h2>إنشاء مشروع جديد (Create New Lighting &amp; Camera Project)</h2>
+            <p style="font-size:0.84rem; color:var(--text-muted);">اختر مكان محفوظ من قائمة الأماكن أو قم بتخصيص أبعاد البلاتوه / التراس / الكنيسة / اللوكيشن الحر</p>
+          </div>
+        </div>
+
+        <div class="item-card" style="max-width:860px; margin:0 auto; padding:22px;">
+          <form id="createProjectForm" onsubmit="CineApp.handleCreateNewProject(event)">
+            <div class="form-grid-2" style="margin-bottom:14px;">
+              <div class="form-group">
+                <label>اسم المشروع</label>
+                <input type="text" id="newProjName" class="form-control" placeholder="مثال: إضاءة برنامج / قداس / حفل..." required />
+              </div>
+              <div class="form-group">
+                <label>اختر قالب المكان المحفوظ</label>
+                <select id="newProjVenueSelect" class="form-control" onchange="CineApp.onNewProjVenueTemplateChange(this.value)"></select>
+              </div>
+            </div>
+
+            <div class="form-grid-3" style="margin-bottom:14px;">
+              <div class="form-group">
+                <label>نوع المكان</label>
+                <select id="newProjVenueType" class="form-control" onchange="CineApp.onNewProjVenueTypeChange(this.value)">
+                  <option value="plateau">1. بلاتوه (شبكة مواسير سقف)</option>
+                  <option value="truss">2. تراس (هيكل حديدي وقواطع)</option>
+                  <option value="church">3. كنيسة الملاك (صحن وهيكل وكراسي وأعمدة)</option>
+                  <option value="free">4. لوكيشن حر مفتوح</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>مدير التصوير</label>
+                <input type="text" id="newProjDop" class="form-control" placeholder="اسم مدير التصوير" />
+              </div>
+              <div class="form-group">
+                <label>مبرمج الإضاءة</label>
+                <input type="text" id="newProjProgrammer" class="form-control" placeholder="اسم مبرمج الإضاءة" />
+              </div>
+            </div>
+
+            <div class="form-grid-3" style="margin-bottom:16px;">
+              <div class="form-group">
+                <label>عرض المكان بالمتر</label>
+                <input type="number" step="any" min="1" max="150" id="newProjWidth" class="form-control" value="14" required />
+              </div>
+              <div class="form-group">
+                <label>طول المكان بالمتر</label>
+                <input type="number" step="any" min="1" max="150" id="newProjLength" class="form-control" value="10" required />
+              </div>
+              <div class="form-group">
+                <label>ارتفاع السقف أو التراس بالمتر</label>
+                <input type="number" step="any" min="1" max="40" id="newProjHeight" class="form-control" value="4.5" required />
+              </div>
+            </div>
+
+            <div id="newProjVenueHint" style="background:var(--bg-input); border:1px solid var(--border-subtle); border-right:3px solid var(--accent-amber); padding:12px; border-radius:8px; margin-bottom:18px; font-size:0.84rem; color:var(--text-secondary);">
+              سيتم تحميل الشبكة الحديدية العلوية للبلاتوه تلقائياً مع خاصية التعليق التلقائي (Auto-Snap) للكشافات، ويمكنك تعديل المواسير في أي وقت من داخل المشروع.
+            </div>
+
+            <div style="display:flex; gap:10px; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+              <button type="button" id="newProjCrewBtn" class="btn btn-secondary" onclick="CineApp.openCrewModal('draft')" style="padding:11px 18px; font-size:0.9rem;">
+                🎬 Crew
+              </button>
+              <button type="submit" class="btn btn-primary" style="padding:12px 20px; font-size:0.95rem; max-width:100%; white-space:normal; text-align:center;">
+                🚀 إنشاء وفتح مساحة التصميم
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- SECTION 2: سجل المشاريع (Saved Projects) -->
+      <div id="secSavedProjects" class="dash-section hidden">
+        <div class="section-header-bar">
+          <div>
+            <h2>سجل المشاريع</h2>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <label id="btnSavedProjImportJson" class="btn btn-cyan" style="cursor:pointer;">
+              📥 استيراد مشروع
+              <input type="file" accept=".json,application/json" class="hidden" onchange="CineApp.handleImportProjectFile(event)" />
+            </label>
+            <button type="button" id="btnSavedProjNew" class="btn btn-primary" onclick="CineApp.switchDashboardSection('new_project')">
+              ➕ مشروع جديد
+            </button>
+          </div>
+        </div>
+
+        <div id="savedProjectsGrid" class="cards-grid"></div>
+      </div>
+
+      <!-- SECTION 3: قائمة المعدات (Equipment Manager) -->
+      <div id="secEquipmentManager" class="dash-section hidden">
+        <div class="section-header-bar">
+          <div>
+            <h2>قائمة المعدات والفئات (Equipment &amp; Categories Manager)</h2>
+            <p style="font-size:0.84rem; color:var(--text-muted);">إدارة كاملة للفئات والمعدات • تعديل عدد قنوات الـ DMX والوات • تغيير شكل الفيكتور أو رفع صورة مخصصة من جهازك</p>
+          </div>
+          <div style="display:flex; gap:8px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary" onclick="CineApp.openCategoryModal()">
+              📁 + إضافة فئة جديدة (New Category)
+            </button>
+            <button type="button" class="btn btn-primary" onclick="CineApp.openEquipmentModal(null)">
+              💡 + إضافة معدة جديدة (Add Equipment)
+            </button>
+          </div>
+        </div>
+
+        <div id="eqCategoriesBar" class="category-pills-bar"></div>
+        <div id="equipmentManagerGrid" class="cards-grid"></div>
+      </div>
+
+      <!-- SECTION 4: قائمة الأماكن (Venues / Locations Manager) -->
+      <div id="secVenuesManager" class="dash-section hidden">
+        <div class="section-header-bar">
+          <div>
+            <h2>قائمة الأماكن المحفوظة (Venues &amp; Locations Manager)</h2>
+            <p style="font-size:0.84rem; color:var(--text-muted);">احفظ الأبعاد الثابتة للبلاتوه والشبكة العلوية، التراس وسمك الحديد القاطع، والكنيسة والأعمدة لاستخدامها بضغطة واحدة</p>
+          </div>
+          <div>
+            <button type="button" class="btn btn-primary" onclick="CineApp.openVenueModal(null)">
+              🏛️ + إضافة مكان جديد (Add Venue Template)
+            </button>
+          </div>
+        </div>
+
+        <div id="venuesManagerGrid" class="cards-grid"></div>
+      </div>
+
+      <!-- SECTION 5: إدارة المستخدمين وصلاحيات الأقسام (Admin Users & Permissions Manager) -->
+      <div id="secUsersManager" class="dash-section hidden">
+        <div class="section-header-bar">
+          <div>
+            <h2>👥 إدارة المستخدمين وصلاحيات الأقسام (Users &amp; Section Permissions)</h2>
+            <p style="font-size:0.84rem; color:var(--text-muted);">
+              إضافة مستخدمين جدد (Admin أو Regular User) • تغيير كلمات المرور • تحديد الأقسام المتاحة أو المخفية لكل مستخدم عادي
+            </p>
+          </div>
+          <div>
+            <button type="button" class="btn btn-primary" onclick="CineApp.openUserCrudModal(null)">
+              ➕ إضافة مستخدم جديد (Add New User)
+            </button>
+          </div>
+        </div>
+
+        <div id="usersManagerGrid" class="cards-grid"></div>
+      </div>
+
+      <!-- SECTION 6: مشروع ورقي (Paper Project — Light & DMX Sheets) -->
+      <div id="secPaperProject" class="dash-section hidden"></div>
+    </main>
+  </section>
+
+  <!-- ========================================================================
+       3. INTERACTIVE STAGE PLANNER WORKSPACE (2D / 3D VIEWPORT)
+       ======================================================================== -->
+  <section id="workspaceScreen" class="workspace-screen hidden" dir="ltr">
+    <!-- Exit Full-Screen `Display` Mode Floating Button -->
+    <button type="button" id="exitDisplayModeBtn" class="exit-display-btn hidden" onclick="CineApp.toggleDisplayMode(false)">
+      ✕ خروج من العرض الكامل
+    </button>
+
+    <!-- UPPER SECTION (Top Toolbar + Scenes Bar) - collapsible via Minimize button / swipe -->
+    <div id="workspaceUpperSection" class="workspace-upper">
+    <!-- TOP TOOLBAR -->
+    <header class="workspace-topbar">
+      <div class="topbar-left">
+        <button type="button" id="topbarHomeBtn" class="btn btn-secondary shams-home-btn" onclick="CineApp.closeProjectToDashboard()" title="Back to Home">
+          🏠 Home
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="CineApp.toggleEquipmentDrawer()" title="Show / Hide Equipment Palette">
+          🧰 Equipment
+        </button>
+        <div id="activeProjectTitleBadge" class="project-title-badge">Studio Plot</div>
+      </div>
+
+      <div class="topbar-center">
+        <!-- A. COMPACT GLOBAL DROPDOWN CHECKBOXES (`Show Info ▾`) -->
+        <div class="dropdown-wrapper">
+          <button type="button" id="showInfoDropdownBtn" class="btn btn-secondary" onclick="CineApp.toggleShowInfoMenu(event)">
+            👁️ Show Info ▾
+          </button>
+          <div id="showInfoDropdownMenu" class="show-info-menu hidden" onclick="event.stopPropagation()">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <span style="font-size:0.78rem; font-weight:800;">بيانات وزوايا العناصر على المخطط</span>
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="btn btn-secondary" style="padding:2px 7px; font-size:0.68rem;" onclick="CineApp.setAllInfoFlags(true)">الكل</button>
+                <button type="button" class="btn btn-secondary" style="padding:2px 7px; font-size:0.68rem;" onclick="CineApp.setAllInfoFlags(false)">لا شيء</button>
+              </div>
+            </div>
+            <div class="show-info-columns">
+              <!-- Fixture Checkboxes -->
+              <div class="show-info-col">
+                <h4>الكشافات</h4>
+                <label class="info-check-label" style="color:var(--accent-amber);">
+                  <input type="checkbox" id="chk_lightBeam" onchange="CineApp.onShowInfoFlagChange('lightBeam', this.checked)" />
+                  شعاع الإضاءة
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_fixtureName" onchange="CineApp.onShowInfoFlagChange('fixtureName', this.checked)" />
+                  اسم الكشاف
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_accessoryName" onchange="CineApp.onShowInfoFlagChange('accessoryName', this.checked)" />
+                  اسم الإكسسوار
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_fixtureNum" onchange="CineApp.onShowInfoFlagChange('fixtureNum', this.checked)" />
+                  رقم الكشاف
+                </label>
+                <label id="chkRow_channel" class="info-check-label">
+                  <input type="checkbox" id="chk_channel" onchange="CineApp.onShowInfoFlagChange('channel', this.checked)" />
+                  القناة
+                </label>
+                <label id="chkRow_address" class="info-check-label">
+                  <input type="checkbox" id="chk_address" onchange="CineApp.onShowInfoFlagChange('address', this.checked)" />
+                  العنوان
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_dimmer" onchange="CineApp.onShowInfoFlagChange('dimmer', this.checked)" />
+                  شدة الإضاءة
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_kelvin" onchange="CineApp.onShowInfoFlagChange('kelvin', this.checked)" />
+                  الكيلفن
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_color" onchange="CineApp.onShowInfoFlagChange('color', this.checked)" />
+                  اللون
+                </label>
+              </div>
+
+              <!-- Camera Checkboxes -->
+              <div id="showInfoCameraCol" class="show-info-col">
+                <h4>الكاميرات</h4>
+                <label class="info-check-label" style="color:var(--accent-cyan);">
+                  <input type="checkbox" id="chk_cameraCone" onchange="CineApp.onShowInfoFlagChange('cameraCone', this.checked)" />
+                  كادر وزاوية الكاميرا
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_camNum" onchange="CineApp.onShowInfoFlagChange('camNum', this.checked)" />
+                  رقم الكاميرا
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_lensZoom" onchange="CineApp.onShowInfoFlagChange('lensZoom', this.checked)" />
+                  العدسة والزوم
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_fStop" onchange="CineApp.onShowInfoFlagChange('fStop', this.checked)" />
+                  فتحة العدسة
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_iso" onchange="CineApp.onShowInfoFlagChange('iso', this.checked)" />
+                  الحساسية (ISO)
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_camKelvin" onchange="CineApp.onShowInfoFlagChange('camKelvin', this.checked)" />
+                  الكيلفن
+                </label>
+                <label class="info-check-label">
+                  <input type="checkbox" id="chk_stLook" onchange="CineApp.onShowInfoFlagChange('stLook', this.checked)" />
+                  إعدادات الصورة
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- B. DEDICATED Display BUTTON -->
+        <button type="button" id="topbarDisplayModeBtn" class="btn btn-primary" onclick="CineApp.toggleDisplayMode(true)" title="Full-Screen Clean Display View">
+          🖥️ Display
+        </button>
+
+        <!-- 2D + 3D Perspective Toggle -->
+        <button type="button" id="toggleViewModeBtn" class="btn btn-cyan" onclick="CineApp.toggle2D3DMode()">
+          🧊 3D View
+        </button>
+
+        <!-- Interactive Manual Cable Routing Tool Button -->
+        <button type="button" id="drawDmxCableModeBtn" class="btn btn-secondary" onclick="CineApp.toggleDmxCableDrawMode()">
+          ✏️ Draw DMX
+        </button>
+
+        <!-- Toggle Auto Sequential Wiring -->
+        <button type="button" id="toggleDmxWiringBtn" class="btn btn-secondary" onclick="CineApp.toggleDmxWiring()" title="Show / Hide Auto DMX Wiring">
+          🔌 Auto DMX
+        </button>
+
+        <!-- Edit Venue Pipes / Truss Size & Thickness Live -->
+        <button type="button" id="btnLiveVenueEditor" class="btn btn-secondary" onclick="CineApp.openLiveVenueEditor()">
+          🏗️ Venue
+        </button>
+
+        <!-- Global Toggle for Control Pad Lock -->
+        <button type="button" id="topbarToggleDpadBtn" class="btn btn-secondary is-locked" onclick="CineApp.toggleControlPadLock()" title="Open / Lock Control Panel">
+          <svg class="ctrl-lock-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2.5" ry="2.5"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"></circle></svg><span>Control</span>
+        </button>
+
+        <!-- Crew Modal Trigger -->
+        <button type="button" id="topbarCrewDesignersBtn" class="btn btn-secondary" onclick="CineApp.openCrewModal()" title="إضافة أسماء Crew وطاقم العمل للطباعة">
+          🎬 Crew
+        </button>
+      </div>
+
+      <div class="topbar-right">
+        <!-- Global Dark / Light Theme Toggle Button -->
+        <button type="button" class="btn btn-secondary" style="padding:6px 10px;" onclick="CineApp.toggleTheme()" title="Toggle Light / Dark Mode">
+          <span class="theme-toggle-icon">☀️</span>
+        </button>
+
+        <!-- Power Load Indicator -->
+        <div class="dropdown-wrapper">
+          <div id="powerLoadBadge" class="power-pill" onclick="CineApp.togglePowerPopover(event)">
+            ⚡ 0W (0.0A)
+          </div>
+          <div id="powerLoadPopover" class="power-popover hidden" onclick="event.stopPropagation()">
+            <h4 style="font-size:0.8rem; color:var(--accent-emerald); margin-bottom:8px;">أحمال الكهرباء (220 فولت)</h4>
+            <div id="powerLoadBreakdown" style="font-size:0.8rem; display:flex; flex-direction:column; gap:6px;"></div>
+          </div>
+        </div>
+
+        <!-- Export Modal Trigger -->
+        <button type="button" id="topbarExportReportsBtn" class="btn btn-emerald" onclick="CineApp.openReportsModal()">
+          📊 Export
+        </button>
+      </div>
+    </header>
+
+    <!-- SCENES / CUES SUB-BAR -->
+    <div class="scenes-bar">
+      <div class="scenes-tabs-list" id="scenesTabsContainer"></div>
+      <div style="display:flex; gap:6px; align-items:center;">
+        <button type="button" class="btn btn-secondary" style="padding:3px 9px; font-size:0.74rem;" onclick="CineApp.addNewScene()">+ مشهد جديد</button>
+        <button type="button" class="btn btn-secondary" style="padding:3px 9px; font-size:0.74rem;" onclick="CineApp.duplicateActiveScene()">⧉ نسخ المشهد</button>
+        <button type="button" class="btn btn-secondary" style="padding:3px 9px; font-size:0.74rem;" onclick="CineApp.renameActiveScene()">✎ تسمية</button>
+      </div>
+    </div>
+    </div>
+    <!-- /UPPER SECTION -->
+
+    <!-- MAIN WORKSPACE BODY -->
+    <div class="workspace-body">
+      <!-- Collapsible Equipment Palette Drawer -->
+      <aside id="equipmentDrawer" class="equipment-drawer">
+        <div class="drawer-header">
+          <span style="font-size:0.82rem; font-weight:800;">أضف للمخطط (اضغط للإضافة)</span>
+          <button type="button" class="modal-close-btn" style="font-size:1.1rem;" onclick="CineApp.toggleEquipmentDrawer()">✕</button>
+        </div>
+        <div id="drawerCategoryTabs" class="drawer-cats"></div>
+        <div id="drawerEquipmentList" class="drawer-items-list"></div>
+      </aside>
+
+      <!-- Interactive 2D / 3D Canvas Viewport -->
+      <div class="viewport-container">
+        <canvas id="stageCanvas"></canvas>
+
+        <!-- Minimize / Restore Upper Section -->
+        <button type="button" id="upperToggleBtn" class="upper-toggle-btn" onclick="CineApp.toggleUpperSection()" title="إخفاء أو إظهار الشريط العلوي">
+          <span class="upper-toggle-icon">—</span> <span class="upper-toggle-label">إخفاء الجزء العلوي</span>
+        </button>
+
+        <!-- MANUAL CUSTOM DMX CABLE ROUTING FLOATING TOOLBAR -->
+        <div id="dmxCableToolbar" class="dmx-cable-toolbar hidden">
+          <strong style="font-size:0.78rem; color:var(--accent-cyan);">✏️ أداة رسم الكابل اليدوي:</strong>
+          <input type="color" id="dmxCableColorPicker" value="#38bdf8" style="width:28px; height:26px; border:none; background:none; cursor:pointer;" onchange="CineApp.setDmxCableColor(this.value)" title="لون الكابل" />
+          <div style="display:flex; gap:4px;">
+            <button type="button" class="color-swatch-btn active" style="background:#38bdf8;" onclick="CineApp.setDmxCableColor('#38bdf8', this)"></button>
+            <button type="button" class="color-swatch-btn" style="background:#10b981;" onclick="CineApp.setDmxCableColor('#10b981', this)"></button>
+            <button type="button" class="color-swatch-btn" style="background:#f59e0b;" onclick="CineApp.setDmxCableColor('#f59e0b', this)"></button>
+            <button type="button" class="color-swatch-btn" style="background:#a855f7;" onclick="CineApp.setDmxCableColor('#a855f7', this)"></button>
+            <button type="button" class="color-swatch-btn" style="background:#f43f5e;" onclick="CineApp.setDmxCableColor('#f43f5e', this)"></button>
+          </div>
+          <select id="dmxCableStyleSelect" class="form-control" style="width:92px; padding:4px 6px; font-size:0.75rem;" onchange="CineApp.setDmxCableStyle(this.value)">
+            <option value="dashed">متقطع</option>
+            <option value="solid">متصل</option>
+            <option value="dotted">منقط</option>
+          </select>
+          <select id="dmxCableChannelTag" class="form-control" style="width:105px; padding:4px 6px; font-size:0.75rem;" onchange="CineApp.setDmxCableChannelTag(this.value)">
+            <option value="Channel A">قناة A</option>
+            <option value="Channel B">قناة B</option>
+            <option value="Channel C">قناة C</option>
+            <option value="Channel D">قناة D</option>
+            <option value="Channel E">قناة E</option>
+            <option value="Channel F">قناة F</option>
+            <option value="Channel G">قناة G</option>
+            <option value="Channel H">قناة H</option>
+          </select>
+          <button type="button" class="btn btn-emerald" style="padding:4px 9px; font-size:0.74rem;" onclick="CineApp.finishCurrentDmxCable()">✓ إنهاء الكابل</button>
+          <button type="button" class="btn btn-secondary" style="padding:4px 9px; font-size:0.74rem;" onclick="CineApp.undoDmxCablePoint()">↩ تراجع نقطة</button>
+          <button type="button" id="deleteSelectedCableBtn" class="btn btn-danger hidden" style="padding:4px 9px; font-size:0.74rem;" onclick="CineApp.deleteSelectedCustomCable()">🗑 حذف الكابل</button>
+          <button type="button" class="btn btn-danger" style="padding:4px 9px; font-size:0.74rem;" onclick="CineApp.clearAllDmxCables()">🧹 مسح الكل</button>
+          <button type="button" class="btn btn-secondary" style="padding:4px 8px; font-size:0.74rem;" onclick="CineApp.toggleDmxCableDrawMode(false)">✕ إغلاق</button>
+        </div>
+
+        <!-- LEFT-SIDE 4-ARROW DIRECTIONAL PAD + SCALE -->
+        <div id="leftAimDpad" class="left-aim-dpad hidden">
+          <div class="dpad-header-row">
+            <div id="dpadItemTitle" class="dpad-title">كشاف #1</div>
+            <button type="button" class="dpad-hide-btn" onclick="CineApp.hideLeftDpad()" title="إخفاء لوحة التحكم">✕</button>
+          </div>
+          <div id="dpadLockBadge" class="dpad-lock-badge">🔒 الموقع مثبت</div>
+
+          <div class="dpad-grid">
+            <button type="button" class="dpad-btn" title="تدوير يسار 15°" onclick="CineApp.dpadAction('left', 15)">↶</button>
+            <button type="button" class="dpad-btn" title="زيادة مدى الشعاع" onclick="CineApp.dpadAction('up', 5)">▲</button>
+            <button type="button" class="dpad-btn" title="تدوير يمين 15°" onclick="CineApp.dpadAction('right', 15)">↷</button>
+
+            <button type="button" class="dpad-btn" title="تدوير يسار 5°" onclick="CineApp.dpadAction('left', 5)">◀</button>
+            <div id="dpadCenterAngle" class="dpad-center-deg">0°</div>
+            <button type="button" class="dpad-btn" title="تدوير يمين 5°" onclick="CineApp.dpadAction('right', 5)">▶</button>
+
+            <button type="button" class="dpad-btn" title="توجيه غرب" onclick="CineApp.dpadAction('aim_west')">غ</button>
+            <button type="button" class="dpad-btn" title="تقليل مدى الشعاع" onclick="CineApp.dpadAction('down', 5)">▼</button>
+            <button type="button" class="dpad-btn" title="توجيه شرق" onclick="CineApp.dpadAction('aim_east')">ش</button>
+          </div>
+
+          <!-- Item Scale Controls -->
+          <div class="dpad-scale-row">
+            <button type="button" class="dpad-scale-btn" title="تصغير" onclick="CineApp.scaleSelected(-0.15)">−</button>
+            <span id="dpadScaleReadout" class="dpad-scale-label" title="إرجاع الحجم الافتراضي" onclick="CineApp.scaleSelected(0, true)">الحجم: 1.0x</span>
+            <button type="button" class="dpad-scale-btn" title="تكبير" onclick="CineApp.scaleSelected(0.15)">+</button>
+          </div>
+
+          <!-- Fresnel Lens Zoom Control -->
+          <div id="dpadFresnelZoomRow" class="hidden" style="background:rgba(14,165,233,0.12); border:1px solid rgba(56,189,248,0.4); border-radius:7px; padding:6px 8px; margin-bottom:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; font-weight:800; color:#38bdf8; margin-bottom:3px;">
+              <span>🔍 زوم العدسة</span>
+              <span id="dpadFresnelZoomVal">35°</span>
+            </div>
+            <input type="range" id="dpadFresnelZoomRange" min="10" max="80" step="1" value="35" style="width:100%; cursor:pointer;" oninput="CineApp.onFresnelZoomChange(this.value)" />
+          </div>
+
+          <div class="dpad-actions">
+            <button type="button" class="btn btn-primary" onclick="CineApp.openSelectedSettingsModal()">
+              ⚙ الإعدادات
+            </button>
+            <button type="button" id="dpadToggleUnlockBtn" class="btn btn-secondary" onclick="CineApp.toggleSelectedPositionLock()">
+              🔓 فك قفل الموقع
+            </button>
+            <button type="button" id="dpadFloorMountToggleBtn" class="btn btn-secondary dpad-floor-btn" onclick="CineApp.toggleSelectedFloorGroundMount()" title="وضع الكشاف على الأرض أو رفعه للسقف">
+              ⬇ وضع الكشاف على الأرض
+            </button>
+            <button type="button" id="dpadDetachAccessoryStandBtn" class="btn btn-secondary dpad-lock-btn is-unlocked" onclick="CineApp.unlockSelectedAttachments()" title="قفل أو فك ربط الاستاند / الإكسسوار بالكشاف">
+              🔓 قفل الإكسسوار
+            </button>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px;">
+              <button type="button" class="btn btn-cyan" onclick="CineApp.duplicateSelectedItem()">⧉ نسخ</button>
+              <button type="button" class="btn btn-danger" onclick="CineApp.deleteSelectedItem()">🗑 حذف</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Side Lock Toggle for Control Panel (Locked by default) -->
+        <button type="button" id="reopenDpadPill" class="reopen-dpad-pill is-locked" onclick="CineApp.toggleControlPadLock()" title="فتح أو قفل قائمة التحكم">
+          <svg class="ctrl-lock-svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2.5" ry="2.5"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path><circle cx="12" cy="16.5" r="1.2" fill="currentColor" stroke="none"></circle></svg><span>التحكم</span>
+        </button>
+
+        <!-- Bottom-Right Viewport Zoom & 3D Orbit Controls -->
+        <div class="viewport-hud-bottom">
+          <button type="button" id="hudOrbitToggleBtn" class="btn btn-secondary hidden" style="padding:5px 9px; font-size:0.76rem;" onclick="CineApp.toggle3DOrbitDrag()">
+            🔄 تدوير 3D: مفعل
+          </button>
+          <button type="button" class="btn btn-secondary" style="padding:5px 9px; font-size:0.78rem;" onclick="CineApp.zoomViewport(0.85)">−</button>
+          <button type="button" class="btn btn-secondary" style="padding:5px 9px; font-size:0.76rem;" onclick="CineApp.fitViewport()">ملاءمة</button>
+          <button type="button" class="btn btn-secondary" style="padding:5px 9px; font-size:0.78rem;" onclick="CineApp.zoomViewport(1.18)">+</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       4. INSPECTOR & CRUD MODALS
+       ======================================================================== -->
+
+  <!-- A. LIGHTING FIXTURE SETTINGS MODAL -->
+  <div id="fixtureInspectorModal" class="modal-backdrop hidden">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3>💡 Lighting Fixture Settings &amp; DMX512 Patch</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('fixtureInspectorModal')">✕</button>
+      </div>
+      <form id="fixtureInspectorForm" onsubmit="CineApp.saveFixtureInspector(event)">
+        <div class="modal-body">
+          <div id="fixModalDmxBox" class="dmx-address-box">
+            <div>
+              <div style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Calculated DMX512 Patch Address</div>
+              <div id="fixModalDmxDisplay" class="dmx-addr-digits">Channel A • #1 • Addr: 1 – 4</div>
+              <div id="fixModalDmxWarning" class="hidden" style="color:#ef4444; font-size:0.76rem; font-weight:700; margin-top:3px;">
+                ⚠️ Warning: DMX Address exceeds 512 universe limit on this channel!
+              </div>
+            </div>
+            <label style="font-size:0.76rem; display:flex; align-items:center; gap:6px; cursor:pointer;">
+              <input type="checkbox" id="fixModalManualAddrToggle" onchange="CineApp.onFixtureModalFieldChange()" />
+              Manual Override
+            </label>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>1. Fixture Model</label>
+              <select id="fixModalModelSelect" class="form-control" onchange="CineApp.onFixtureModalModelSwitch(this.value)"></select>
+            </div>
+            <div class="form-group">
+              <label>Custom Label / Purpose</label>
+              <input type="text" id="fixModalLabel" class="form-control" placeholder="e.g. Key Light Host" />
+            </div>
+          </div>
+
+          <div id="fixModalDmxFieldsRow" class="form-grid-4">
+            <div class="form-group">
+              <label>2. DMX Footprint (Ch)</label>
+              <input type="number" min="0" max="512" id="fixModalFootprint" class="form-control" required oninput="CineApp.onFixtureModalFieldChange()" />
+            </div>
+            <div class="form-group">
+              <label>3. Controller Output Channel</label>
+              <select id="fixModalChannel" class="form-control" onchange="CineApp.onFixtureModalChannelSwitch(this.value)">
+                <option value="">— فارغ (بدون تحديد) —</option>
+                <option value="Channel A">Channel A</option>
+                <option value="Channel B">Channel B</option>
+                <option value="Channel C">Channel C</option>
+                <option value="Channel D">Channel D</option>
+                <option value="Channel E">Channel E</option>
+                <option value="Channel F">Channel F</option>
+                <option value="Channel G">Channel G</option>
+                <option value="Channel H">Channel H</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>4. Light Number (0 = بدون DMX)</label>
+              <input type="number" min="0" max="999" step="1" id="fixModalOrderNum" class="form-control" required oninput="CineApp.onFixtureModalFieldChange()" />
+            </div>
+            <div class="form-group">
+              <label>5. Start Address</label>
+              <input type="number" min="1" max="512" step="1" id="fixModalStartAddr" class="form-control" readonly />
+            </div>
+          </div>
+
+          <div style="background:var(--bg-input); border:1px solid var(--border-subtle); border-radius:8px; padding:12px; margin-bottom:14px;">
+            <div style="font-size:0.8rem; font-weight:800; color:var(--accent-amber); margin-bottom:10px;">6. Lighting Parameters (Dimmer, Kelvin &amp; Gel/RGB Color)</div>
+            <div class="form-grid-3">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Dimmer (<span id="fixModalDimmerVal">100</span>%)</label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input type="range" min="0" max="100" id="fixModalDimmerRange" oninput="CineApp.syncFixtureDimmer(this.value, 'range')" onchange="CineApp.syncFixtureDimmer(this.value, 'range', true)" />
+                  <input type="number" min="0" max="100" step="any" id="fixModalDimmerNum" class="form-control" style="width:68px; padding:6px;" oninput="CineApp.syncFixtureDimmer(this.value, 'num')" onblur="CineApp.syncFixtureDimmer(this.value === '' ? 0 : this.value, 'blur', true)" />
+                </div>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Kelvin (Color Temp - اختياري)</label>
+                <input type="text" id="fixModalKelvin" list="kelvinPresets" class="form-control" placeholder="فارغ افتراضياً (مثال: 5600K)" />
+                <datalist id="kelvinPresets">
+                  <option value="2700K"></option>
+                  <option value="3200K"></option>
+                  <option value="4300K"></option>
+                  <option value="5600K"></option>
+                  <option value="6500K"></option>
+                  <option value="8000K"></option>
+                </datalist>
+              </div>
+
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Color / Gel (اللون - اختياري)</label>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <input type="color" id="fixModalColorHex" style="width:38px; height:36px; border:none; background:none; cursor:pointer;" oninput="document.getElementById('fixModalColorName').value = this.value; CineApp.applyFixtureInspectorLive();" onchange="document.getElementById('fixModalColorName').value = this.value; CineApp.applyFixtureInspectorLive({ immediatePersist: true });" />
+                  <input type="text" id="fixModalColorName" class="form-control" placeholder="فارغ افتراضياً (اسم اللون)" />
+                  <button type="button" class="btn btn-secondary" style="padding:6px 8px; font-size:0.72rem;" title="مسح اللون (إفراغ الخانة)" onclick="document.getElementById('fixModalColorName').value=''; document.getElementById('fixModalColorHex').value='#fff3d6'; CineApp.applyFixtureInspectorLive({ immediatePersist: true });">✕</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid-2" style="margin-bottom:14px;">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>📍 المكان (Location)</label>
+              <input type="text" id="fixModalLocation" class="form-control" placeholder="اختياري — مثال: Front Truss / Key Light / Back" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>📝 الملاحظات (Notes)</label>
+              <input type="text" id="fixModalNotes" class="form-control" placeholder="اختياري — أي ملاحظات خاصة بالكشاف..." />
+            </div>
+          </div>
+
+          <div class="form-grid-4">
+            <div class="form-group">
+              <label>7. Mounting / Stand</label>
+              <select id="fixModalMount" class="form-control" onchange="CineApp.onFixModalMountChange && CineApp.onFixModalMountChange(this.value)">
+                <option value="Ceiling Grid / Truss Clamp">Ceiling Grid / Truss Clamp</option>
+                <option value="Silver Stand">Silver Stand (استاند فضي)</option>
+                <option value="Black Stand">Black Stand (استاند أسود)</option>
+                <option value="C-Stand">C-Stand (سي استاند)</option>
+                <option value="Floor / Ground">Floor / Ground (أرضي مباشر)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Power Line (220V Phase)</label>
+              <select id="fixModalPowerLine" class="form-control">
+                <option value="Power Line 1">Power Line 1</option>
+                <option value="Power Line 2">Power Line 2</option>
+                <option value="Power Line 3">Power Line 3</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Watts (W)</label>
+              <input type="number" min="0" max="10000" step="any" id="fixModalWatts" class="form-control" />
+            </div>
+            <div class="form-group">
+              <label>Height Z (Meters)</label>
+              <input type="number" step="any" min="0" max="30" id="fixModalHeightZ" class="form-control" />
+            </div>
+          </div>
+
+          <!-- Nanlite Fresnel Lens Zoom Control Box -->
+          <div id="fixModalFresnelZoomBox" class="hidden" style="background:rgba(14,165,233,0.1); border:1px solid rgba(56,189,248,0.4); border-radius:8px; padding:10px 12px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="font-size:0.82rem; color:#38bdf8;">🔍 تحكم زوم الإضاءة — Nanlite Fresnel Lens (Spot 10° ⟷ Flood 80°)</strong>
+              <span id="fixModalFresnelZoomVal" style="font-weight:800; color:#38bdf8; font-size:0.86rem;">35°</span>
+            </div>
+            <input type="range" id="fixModalFresnelZoomRange" min="10" max="80" step="1" value="35" style="width:100%; cursor:pointer;" oninput="document.getElementById('fixModalBeamAngle').value = this.value; document.getElementById('fixModalFresnelZoomVal').textContent = this.value + '°'; CineApp.onFresnelZoomChange(this.value);" />
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Beam Angle / Zoom (°)</label>
+              <input type="number" min="4" max="160" step="any" id="fixModalBeamAngle" class="form-control" oninput="if(document.getElementById('fixModalFresnelZoomRange')){document.getElementById('fixModalFresnelZoomRange').value=this.value; document.getElementById('fixModalFresnelZoomVal').textContent=this.value+'°';}" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Aim Direction Angle (0°–360°)</label>
+              <input type="number" min="-360" max="360" step="any" id="fixModalRotation" class="form-control" />
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" style="margin-right:auto;" onclick="CineApp.deleteSelectedItem(); CineApp.closeModal('fixtureInspectorModal');">🗑 Delete Fixture</button>
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('fixtureInspectorModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Fixture Settings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- B. CAMERA & SONY CREATIVE LOOK (`ST`) SETTINGS MODAL -->
+  <div id="cameraInspectorModal" class="modal-backdrop hidden">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3>🎥 Camera, Sony G-Master Lens &amp; Creative Look (ST) Settings</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('cameraInspectorModal')">✕</button>
+      </div>
+      <form id="cameraInspectorForm" onsubmit="CineApp.saveCameraInspector(event)">
+        <div class="modal-body">
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label>1. Camera ID / Name</label>
+              <input type="text" id="camModalId" class="form-control" placeholder="Cam 1" required />
+            </div>
+            <div class="form-group">
+              <label>2. Camera Body</label>
+              <select id="camModalBody" class="form-control"></select>
+            </div>
+            <div class="form-group">
+              <label>5. Tripod / Mount</label>
+              <select id="camModalTripod" class="form-control"></select>
+            </div>
+          </div>
+
+          <div style="background:var(--bg-input); border:1px solid var(--border-subtle); border-left:3px solid var(--accent-cyan); border-radius:8px; padding:12px; margin-bottom:14px;">
+            <div class="form-grid-2">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>3. Lens Model (Sony G-Master Series)</label>
+                <select id="camModalLens" class="form-control" onchange="CineApp.onCameraModalLensChange(this.value)"></select>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>4. Zoom / Focal Length: <span id="camModalFocalLabel" style="color:var(--accent-cyan); font-weight:800;">35mm (FOV: 54.4°)</span></label>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input type="range" id="camModalFocalRange" min="16" max="200" value="35" oninput="CineApp.syncCameraFocalLength(this.value)" />
+                  <input type="number" id="camModalFocalNum" class="form-control" style="width:74px; padding:6px;" oninput="CineApp.syncCameraFocalLength(this.value)" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid-4">
+            <div class="form-group">
+              <label>6. F-Stop (Aperture)</label>
+              <input type="text" id="camModalFStop" list="fstopPresets" class="form-control" placeholder="f/2.8" />
+              <datalist id="fstopPresets">
+                <option value="f/1.2"></option>
+                <option value="f/1.4"></option>
+                <option value="f/1.8"></option>
+                <option value="f/2.0"></option>
+                <option value="f/2.8"></option>
+                <option value="f/4.0"></option>
+                <option value="f/5.6"></option>
+                <option value="f/8.0"></option>
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label>ISO</label>
+              <input type="text" id="camModalIso" list="isoPresets" class="form-control" placeholder="800" />
+              <datalist id="isoPresets">
+                <option value="100"></option>
+                <option value="400"></option>
+                <option value="640"></option>
+                <option value="800"></option>
+                <option value="1600"></option>
+                <option value="3200"></option>
+                <option value="6400"></option>
+                <option value="12800"></option>
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label>Shutter Speed</label>
+              <input type="text" id="camModalShutter" list="shutterPresets" class="form-control" placeholder="1/50" />
+              <datalist id="shutterPresets">
+                <option value="1/50"></option>
+                <option value="1/60"></option>
+                <option value="1/100"></option>
+                <option value="1/125"></option>
+                <option value="1/250"></option>
+              </datalist>
+            </div>
+            <div class="form-group">
+              <label>Kelvin (WB)</label>
+              <input type="text" id="camModalKelvin" list="kelvinPresets" class="form-control" placeholder="5600K" />
+            </div>
+          </div>
+
+          <div class="st-look-box">
+            <div class="st-look-header">
+              <div style="display:flex; align-items:center; gap:8px;">
+                <span class="st-badge">ST</span>
+                <span style="font-size:0.86rem; font-weight:800;">7. Sony Creative Look (ST Parameters)</span>
+              </div>
+              <button type="button" class="btn btn-secondary" style="padding:3px 8px; font-size:0.72rem;" onclick="CineApp.resetSonySTLook()">Reset ST Defaults</button>
+            </div>
+
+            <div class="form-grid-4">
+              <div class="st-slider-item">
+                <div class="st-slider-top"><span>Contrast (-9..+9)</span><span id="val_st_contrast">0</span></div>
+                <input type="range" min="-9" max="9" step="1" id="st_contrast" oninput="CineApp.updateSTLabel('contrast', this.value)" />
+              </div>
+              <div class="st-slider-item">
+                <div class="st-slider-top"><span>Highlights (-9..+9)</span><span id="val_st_highlights">0</span></div>
+                <input type="range" min="-9" max="9" step="1" id="st_highlights" oninput="CineApp.updateSTLabel('highlights', this.value)" />
+              </div>
+              <div class="st-slider-item">
+                <div class="st-slider-top"><span>Shadows (-9..+9)</span><span id="val_st_shadows">0</span></div>
+                <input type="range" min="-9" max="9" step="1" id="st_shadows" oninput="CineApp.updateSTLabel('shadows', this.value)" />
+              </div>
+              <div class="st-slider-item">
+                <div class="st-slider-top"><span>Fade (0..9)</span><span id="val_st_fade">0</span></div>
+                <input type="range" min="0" max="9" step="1" id="st_fade" oninput="CineApp.updateSTLabel('fade', this.value)" />
+              </div>
+              <div class="st-slider-item">
+                <div class="st-slider-top"><span>Saturation (-9..+9)</span><span id="val_st_saturation">0</span></div>
+                <input type="range" min="-9" max="9" step="1" id="st_saturation" oninput="CineApp.updateSTLabel('saturation', this.value)" />
+              </div>
+              <div class="st-slider-item">
+                <div class="st-slider-top"><span>Sharpness (0..9)</span><span id="val_st_sharpness">4</span></div>
+                <input type="range" min="0" max="9" step="1" id="st_sharpness" oninput="CineApp.updateSTLabel('sharpness', this.value)" />
+              </div>
+              <div class="st-slider-item">
+                <div class="st-slider-top"><span>Clarity (0..9)</span><span id="val_st_clarity">0</span></div>
+                <input type="range" min="0" max="9" step="1" id="st_clarity" oninput="CineApp.updateSTLabel('clarity', this.value)" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" style="margin-right:auto;" onclick="CineApp.deleteSelectedItem(); CineApp.closeModal('cameraInspectorModal');">🗑 Delete Camera</button>
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('cameraInspectorModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Camera Settings</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- B2. PAPER PROJECT CAMERA ST CREATIVE LOOK MODAL -->
+  <div id="paperCameraStModal" class="modal-backdrop hidden">
+    <div class="modal-window" style="max-width:600px;">
+      <div class="modal-header">
+        <h3>🎛️ إعدادات الكاميرا — Sony Creative Look (ST)</h3>
+        <button type="button" class="modal-close-btn" onclick="ShamsPaper.closeCameraStModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="paperStCamTitle" style="font-weight:800; color:var(--accent-cyan); margin-bottom:10px; font-size:0.9rem;"></div>
+        <div class="st-look-box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+            <span style="font-size:0.84rem; font-weight:800; color:#e2e8f0;">Sony Creative Look — ST Parameters</span>
+            <button type="button" class="btn btn-secondary" style="padding:3px 10px; font-size:0.74rem;" onclick="ShamsPaper.resetPaperCameraST()">↺ Reset ST</button>
+          </div>
+          <div class="form-grid-4">
+            <div class="st-slider-item">
+              <div class="st-slider-top"><span>Contrast (-9..+9)</span><span id="paper_val_st_contrast">0</span></div>
+              <input type="range" min="-9" max="9" step="1" id="paper_st_contrast" oninput="ShamsPaper.updatePaperSTField('contrast', this.value)" />
+            </div>
+            <div class="st-slider-item">
+              <div class="st-slider-top"><span>Highlights (-9..+9)</span><span id="paper_val_st_highlights">0</span></div>
+              <input type="range" min="-9" max="9" step="1" id="paper_st_highlights" oninput="ShamsPaper.updatePaperSTField('highlights', this.value)" />
+            </div>
+            <div class="st-slider-item">
+              <div class="st-slider-top"><span>Shadows (-9..+9)</span><span id="paper_val_st_shadows">0</span></div>
+              <input type="range" min="-9" max="9" step="1" id="paper_st_shadows" oninput="ShamsPaper.updatePaperSTField('shadows', this.value)" />
+            </div>
+            <div class="st-slider-item">
+              <div class="st-slider-top"><span>Fade (0..9)</span><span id="paper_val_st_fade">0</span></div>
+              <input type="range" min="0" max="9" step="1" id="paper_st_fade" oninput="ShamsPaper.updatePaperSTField('fade', this.value)" />
+            </div>
+            <div class="st-slider-item">
+              <div class="st-slider-top"><span>Saturation (-9..+9)</span><span id="paper_val_st_saturation">0</span></div>
+              <input type="range" min="-9" max="9" step="1" id="paper_st_saturation" oninput="ShamsPaper.updatePaperSTField('saturation', this.value)" />
+            </div>
+            <div class="st-slider-item">
+              <div class="st-slider-top"><span>Sharpness (0..9)</span><span id="paper_val_st_sharpness">4</span></div>
+              <input type="range" min="0" max="9" step="1" id="paper_st_sharpness" oninput="ShamsPaper.updatePaperSTField('sharpness', this.value)" />
+            </div>
+            <div class="st-slider-item">
+              <div class="st-slider-top"><span>Clarity (0..9)</span><span id="paper_val_st_clarity">0</span></div>
+              <input type="range" min="0" max="9" step="1" id="paper_st_clarity" oninput="ShamsPaper.updatePaperSTField('clarity', this.value)" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" onclick="ShamsPaper.closeCameraStModal()">✅ تم / إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- C. PROP / SUBJECT / STAND INSPECTOR MODAL -->
+  <div id="propInspectorModal" class="modal-backdrop hidden">
+    <div class="modal-window" style="max-width:460px;">
+      <div class="modal-header">
+        <h3>🧍 Subject / Prop / Stand Settings</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('propInspectorModal')">✕</button>
+      </div>
+      <form onsubmit="CineApp.savePropInspector(event)">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Label / Name on Plot</label>
+            <input type="text" id="propModalLabel" class="form-control" required />
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Rotation Angle (°)</label>
+              <input type="number" step="any" id="propModalRotation" class="form-control" value="0" />
+            </div>
+            <div class="form-group">
+              <label>Elevation / Height Z (m)</label>
+              <input type="number" step="any" id="propModalHeightZ" class="form-control" value="1.75" />
+            </div>
+          </div>
+          <!-- Nanlite Fresnel Lens Zoom Control in Accessory Inspector -->
+          <div id="propModalFresnelZoomBox" class="hidden" style="background:rgba(14,165,233,0.12); border:1px solid rgba(56,189,248,0.45); border-radius:8px; padding:12px; margin-top:10px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <strong style="font-size:0.84rem; color:#38bdf8;">🔍 تحكم زوم الإضاءة (Nanlite Fresnel Lens Zoom)</strong>
+              <span id="propModalFresnelZoomVal" style="font-weight:800; color:#38bdf8; font-size:0.9rem;">35°</span>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <span style="font-size:0.74rem; color:var(--text-secondary);">Spot 10°</span>
+              <input type="range" id="propModalFresnelZoomRange" min="10" max="80" step="1" value="35" style="flex:1; cursor:pointer;" oninput="document.getElementById('propModalFresnelZoomVal').textContent = this.value + '°'; CineApp.onFresnelZoomChange(this.value);" />
+              <span style="font-size:0.74rem; color:var(--text-secondary);">Flood 80°</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" style="margin-right:auto;" onclick="CineApp.deleteSelectedItem(); CineApp.closeModal('propInspectorModal');">🗑 Delete</button>
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('propInspectorModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- D. EQUIPMENT MANAGER CRUD MODAL -->
+  <div id="equipmentCrudModal" class="modal-backdrop hidden">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="eqCrudModalTitle">Add / Edit Equipment Item</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('equipmentCrudModal')">✕</button>
+      </div>
+      <form onsubmit="CineApp.saveEquipmentCrud(event)">
+        <div class="modal-body">
+          <input type="hidden" id="eqCrudId" />
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Category (الفئة)</label>
+              <select id="eqCrudCategory" class="form-control" onchange="CineApp.onEqCrudCategoryChange(this.value)"></select>
+            </div>
+            <div class="form-group">
+              <label>Equipment Name (اسم المعدة)</label>
+              <input type="text" id="eqCrudName" class="form-control" placeholder="e.g. Nanlite Forza 720B" required />
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label>Short Badge (الاختصار على الرسم)</label>
+              <input type="text" id="eqCrudBadge" class="form-control" placeholder="e.g. F720B" required />
+            </div>
+            <div class="form-group">
+              <label>Vector Schematic Shape</label>
+              <select id="eqCrudVectorShape" class="form-control">
+                <option value="godox_sz200bi">Godox SZ200Bi (Zoom COB + Dial)</option>
+                <option value="godox_sz150r">Godox SZ150R (RGB Zoom COB)</option>
+                <option value="godox_s30">Godox S30 (Spot + Barn Doors)</option>
+                <option value="nanlite_f500">Nanlite Forza 500 (Large Polygonal)</option>
+                <option value="nanlite_f300">Nanlite Forza 300 (Medium Polygonal)</option>
+                <option value="pavotube_30c">Nanlite PavoTube 30C (Octagonal Tube)</option>
+                <option value="godox_tl120">Godox TL120 (120cm Cylinder Tube)</option>
+                <option value="godox_tl30">Godox TL30 (30cm Short Tube)</option>
+                <option value="godox_6r">Godox LED 6R (Pocket RGB Panel)</option>
+                <option value="beam_sr300">Beam SR300 (Moving Head Beam)</option>
+                <option value="blinder_4way">Blinder 4-Way (4-Cell Matrix)</option>
+                <option value="wash_37x15">MeanReal Wash 37x15 (Honeycomb Wash)</option>
+                <option value="par_led_rgb">PAR LED RGB (Round PAR Can)</option>
+                <option value="dmx_splitter">DMX Splitter Box</option>
+                <option value="sony_alpha">Sony Alpha Camera</option>
+                <option value="stand_silver">Silver Stand</option>
+                <option value="stand_black">Black Stand</option>
+                <option value="stand_cstand">C-Stand</option>
+                <option value="stand_clamp">Ceiling Grid / Truss Clamp</option>
+                <option value="tripod_608">Camera Tripod (Manfrotto/Vinten)</option>
+                <option value="prop_person_standing">Standing Person / Subject</option>
+                <option value="prop_person_seated">Seated Person</option>
+                <option value="prop_presenter">Presenter / Host</option>
+                <option value="prop_choir">Choir / Group</option>
+                <option value="prop_table">Table</option>
+                <option value="prop_chair">Chair</option>
+                <option value="prop_altar">Altar / Podium</option>
+                <option value="prop_cyc">Cyclorama / Backdrop</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Upload Custom Image (PNG/JPG)</label>
+              <input type="file" id="eqCrudImageInput" accept="image/*" class="form-control" style="padding:6px;" onchange="CineApp.handleEqImageUpload(event)" />
+            </div>
+          </div>
+
+          <div id="eqCrudImagePreviewRow" class="hidden" style="display:flex; align-items:center; gap:12px; margin-bottom:12px; background:var(--bg-input); padding:8px 12px; border-radius:8px;">
+            <img id="eqCrudPreviewImg" src="" alt="Custom Upload" style="width:52px; height:52px; object-fit:contain; border:1px solid #475569; border-radius:6px;" />
+            <span style="font-size:0.8rem; color:var(--accent-emerald);">Custom device image attached</span>
+            <button type="button" class="btn btn-danger" style="padding:4px 8px; font-size:0.74rem; margin-left:auto;" onclick="CineApp.clearEqCustomImage()">Remove Image</button>
+          </div>
+
+          <div id="eqCrudFixtureFields" class="form-grid-4">
+            <div class="form-group">
+              <label>Default DMX Footprint (Ch)</label>
+              <input type="number" min="0" max="512" id="eqCrudFootprint" class="form-control" value="4" />
+            </div>
+            <div class="form-group">
+              <label>Wattage (Watts)</label>
+              <input type="number" min="0" max="20000" id="eqCrudWatts" class="form-control" value="200" />
+            </div>
+            <div class="form-group">
+              <label>Default Kelvin</label>
+              <input type="text" id="eqCrudKelvin" class="form-control" value="5600K" />
+            </div>
+            <div class="form-group">
+              <label>Default Beam Color</label>
+              <input type="color" id="eqCrudColor" class="form-control" value="#fff3d6" style="height:39px; padding:3px;" />
+            </div>
+          </div>
+
+          <div id="eqCrudLensFields" class="form-grid-3 hidden">
+            <div class="form-group">
+              <label>Min Focal Length (mm)</label>
+              <input type="number" min="8" max="600" id="eqCrudMinMm" class="form-control" value="24" />
+            </div>
+            <div class="form-group">
+              <label>Max Focal Length (mm)</label>
+              <input type="number" min="8" max="600" id="eqCrudMaxMm" class="form-control" value="70" />
+            </div>
+            <div class="form-group">
+              <label>Max Aperture</label>
+              <input type="text" id="eqCrudAperture" class="form-control" value="f/2.8" />
+            </div>
+          </div>
+
+          <div class="form-group" style="margin-bottom:0;">
+            <label>Description / Notes</label>
+            <input type="text" id="eqCrudDesc" class="form-control" placeholder="Notes or technical specs..." />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('equipmentCrudModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Equipment</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- E. CATEGORY CRUD MODAL -->
+  <div id="categoryCrudModal" class="modal-backdrop hidden">
+    <div class="modal-window" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 id="catCrudModalTitle">Manage Equipment Category</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('categoryCrudModal')">✕</button>
+      </div>
+      <form onsubmit="CineApp.saveCategoryCrud(event)">
+        <div class="modal-body">
+          <input type="hidden" id="catCrudId" />
+          <div class="form-group">
+            <label>Category Name in Arabic (اسم الفئة بالعربي)</label>
+            <input type="text" id="catCrudNameAr" class="form-control" placeholder="مثال: مؤثرات خاصة" required />
+          </div>
+          <div class="form-group">
+            <label>Category Name in English</label>
+            <input type="text" id="catCrudNameEn" class="form-control" placeholder="e.g. SFX & Atmosphere" required />
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>Behavior Type</label>
+              <select id="catCrudType" class="form-control">
+                <option value="fixture">Lighting Fixture (DMX + Beam)</option>
+                <option value="camera">Camera</option>
+                <option value="lens">Lens</option>
+                <option value="stand">Stand / Tripod</option>
+                <option value="prop">Subject / Prop / Utility</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Icon Emoji</label>
+              <input type="text" id="catCrudIcon" class="form-control" value="✨" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('categoryCrudModal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">💾 Save Category</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- F. VENUE & CEILING PIPES / TRUSS SIZE & THICKNESS / CHURCH MANAGER MODAL (Update #5) -->
+  <div id="venueCrudModal" class="modal-backdrop hidden">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="venueModalHeaderTitle">🏛️ إعدادات ومقاسات المكان والمسافات</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('venueCrudModal')">✕</button>
+      </div>
+      <form onsubmit="CineApp.saveVenueCrud(event)" novalidate>
+        <div class="modal-body">
+          <input type="hidden" id="venueCrudId" />
+          <input type="hidden" id="venueCrudIsLiveProject" value="false" />
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>اسم المكان / البلاتوه / الكنيسة</label>
+              <input type="text" id="venueCrudName" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>نوع المكان</label>
+              <select id="venueCrudType" class="form-control" onchange="CineApp.onVenueCrudTypeChange(this.value)">
+                <option value="plateau">1. بلاتوه (شبكة مواسير سقف)</option>
+                <option value="truss">2. تراس (هيكل حديدي وقواطع)</option>
+                <option value="church">3. كنيسة الملاك (صحن وهيكل وكراسي وأعمدة)</option>
+                <option value="free">4. لوكيشن حر مفتوح</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label>عرض المكان بالمتر</label>
+              <input type="number" step="any" min="1" max="150" id="venueCrudWidth" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>طول المكان بالمتر</label>
+              <input type="number" step="any" min="1" max="150" id="venueCrudLength" class="form-control" required />
+            </div>
+            <div class="form-group">
+              <label>ارتفاع السقف أو التراس بالمتر</label>
+              <input type="number" step="any" min="1" max="40" id="venueCrudHeight" class="form-control" required />
+            </div>
+          </div>
+
+          <!-- 1. PLATEAU OVERHEAD CEILING PIPE GRID CONFIG -->
+          <div id="venuePlateauBox" style="background:var(--bg-input); border:1px solid var(--border-subtle); border-left:3px solid var(--accent-amber); padding:12px; border-radius:8px; margin-bottom:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <strong style="font-size:0.86rem; color:var(--accent-amber);">شبكة مواسير السقف للبلاتوه</strong>
+              <button type="button" class="btn btn-secondary" style="padding:3px 9px; font-size:0.74rem;" onclick="CineApp.autoSpacePlateauPipes()">
+                ⚡ توزيع المواسير تلقائياً كل ٢ متر
+              </button>
+            </div>
+            <div class="form-group">
+              <label>أماكن المواسير العرضية بالمتر (مفصولة بفاصلة)</label>
+              <input type="text" id="venueHorizontalPipes" class="form-control" placeholder="1.5, 3.0, 4.5, 6.0, 7.5, 8.8" />
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label>أماكن المواسير الطولية بالمتر (مفصولة بفاصلة)</label>
+              <input type="text" id="venueVerticalPipes" class="form-control" placeholder="2.0, 4.0, 6.0, 8.0, 10.0, 12.0" />
+            </div>
+          </div>
+
+          <!-- 2. TRUSS SHAPE, STRUCTURAL SIZE & IRON THICKNESS CONFIG (Update #5) -->
+          <div id="venueTrussBox" class="hidden" style="background:var(--bg-input); border:1px solid var(--border-subtle); border-left:3px solid var(--accent-cyan); padding:12px; border-radius:8px; margin-bottom:12px;">
+            <strong style="font-size:0.86rem; color:var(--accent-cyan); display:block; margin-bottom:10px;">
+              مقاسات التراس وسمك الحديد والقواطع الحديدية
+            </strong>
+            <div class="form-grid-4">
+              <div class="form-group">
+                <label>شكل التراس الأساسي</label>
+                <select id="venueTrussShape" class="form-control">
+                  <option value="straight">تراس مستقيم</option>
+                  <option value="l-shape">تراس حرف L</option>
+                  <option value="u-shape">تراس حرف U</option>
+                  <option value="box">تراس مربع مغلق</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>عرض التراس بالمتر</label>
+                <input type="number" step="any" min="1" max="100" id="venueTrussWidth" class="form-control" value="9" />
+              </div>
+              <div class="form-group">
+                <label>عمق التراس بالمتر</label>
+                <input type="number" step="any" min="1" max="100" id="venueTrussDepth" class="form-control" value="6.5" />
+              </div>
+              <div class="form-group">
+                <label>سمك حديد التراس (<span id="venueTrussThicknessVal">1.0x</span>)</label>
+                <input type="range" min="0.4" max="3.0" step="0.1" id="venueTrussThickness" value="1.0" oninput="document.getElementById('venueTrussThicknessVal').textContent = this.value + 'x'" />
+              </div>
+            </div>
+
+            <div style="margin-top:6px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+                <label style="font-size:0.8rem; font-weight:700;">المواسير والقواطع الحديدية الإضافية</label>
+                <div style="display:flex; gap:6px;">
+                  <button type="button" class="btn btn-primary" style="padding:3px 9px; font-size:0.74rem;" onclick="CineApp.addTrussCrossbarRow('horizontal')">+ إضافة ماسورة بالعرض</button>
+                  <button type="button" class="btn btn-cyan" style="padding:3px 9px; font-size:0.74rem;" onclick="CineApp.addTrussCrossbarRow('vertical')">+ إضافة ماسورة بالطول</button>
+                </div>
+              </div>
+              <div id="venueTrussCrossbarsList" style="display:flex; flex-direction:column; gap:6px;"></div>
+            </div>
+          </div>
+
+          <!-- 3. CHURCH DIMENSIONS, SANCTUARY, PEWS & COLUMNS CONFIG -->
+          <div id="venueChurchBox" class="hidden" style="background:var(--bg-input); border:1px solid var(--border-subtle); border-left:3px solid var(--accent-emerald); padding:12px; border-radius:8px; margin-bottom:12px;">
+            <strong style="font-size:0.86rem; color:var(--accent-emerald); display:block; margin-bottom:10px;">مقاسات ومسافات كنيسة الملاك: صحن الكنيسة والهيكل والأعمدة والكراسي</strong>
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>عمق الهيكل بالمتر</label>
+                <input type="number" step="any" min="0.5" max="50" id="venueChurchSancDepth" class="form-control" value="5.0" />
+              </div>
+              <div class="form-group">
+                <label>عدد الأعمدة لكل جانب</label>
+                <input type="number" step="1" min="0" max="30" id="venueChurchCols" class="form-control" value="5" />
+              </div>
+              <div class="form-group">
+                <label>بُعد الأعمدة عن الحائط بالمتر</label>
+                <input type="number" step="any" min="0.1" max="30" id="venueChurchColOffset" class="form-control" value="2.6" />
+              </div>
+            </div>
+            <div class="form-grid-3">
+              <div class="form-group">
+                <label>عدد صفوف الكراسي</label>
+                <input type="number" min="0" max="100" step="1" id="venueChurchPewRows" class="form-control" value="6" />
+              </div>
+              <div class="form-group">
+                <label>المسافة بين الكراسي بالمتر</label>
+                <input type="number" min="0.1" max="20" step="any" id="venueChurchPewGap" class="form-control" value="1.8" />
+              </div>
+              <div class="form-group">
+                <label>بُعد الكراسي عن الهيكل بالمتر</label>
+                <input type="number" min="0.1" max="30" step="any" id="venueChurchPewAltarOffset" class="form-control" value="1.8" />
+              </div>
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>عرض الممر الأوسط بالمتر</label>
+                <input type="number" step="any" min="0.2" max="30" id="venueChurchAisleW" class="form-control" value="2.4" />
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>أماكن مواسير التعليق العلوية بالمتر (مفصولة بفاصلة)</label>
+                <input type="text" id="venueChurchMountPipes" class="form-control" value="3.5, 6.5, 10.5, 14.5, 18.5" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('venueCrudModal')">إلغاء</button>
+          <button type="submit" class="btn btn-primary">💾 حفظ إعدادات ومقاسات المكان</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- G. EXPORT DMX & CAMERA REPORTS MODAL (Updates #3 & #7) -->
+  <div id="reportsModal" class="modal-backdrop hidden">
+    <div class="modal-window modal-xl">
+      <div class="modal-header">
+        <h3>📊 Export DMX512 Patch Sheet &amp; Camera / Sony ST Setup Reports</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('reportsModal')">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- One-Click Export Action Bar + Channel Filter (Update #7) -->
+        <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; background:var(--bg-input); padding:12px 14px; border-radius:9px; border:1px solid var(--border-subtle); margin-bottom:16px;">
+          <div>
+            <strong id="reportModalProjTitle" style="font-size:0.95rem; display:block;">Project Report</strong>
+            <span id="reportModalSummarySub" style="font-size:0.78rem; color:var(--text-muted);">DMX Channels &amp; Camera Blocking</span>
+          </div>
+          <div id="reportExportActionsBar" style="display:flex; flex-wrap:wrap; gap:8px; align-items:center;">
+            <!-- Report Layout Selector (DMX / Lights / All) -->
+            <div style="display:flex; align-items:center; gap:6px;">
+              <label for="exportReportLayoutSelect" style="font-size:0.76rem; font-weight:700; color:#38bdf8;">ترتيب الورقة:</label>
+              <select id="exportReportLayoutSelect" class="form-control" style="width:130px; padding:6px 8px; font-size:0.8rem;" onchange="CineApp.onExportReportLayoutChange(this.value)">
+                <option value="dmx">DMX</option>
+                <option value="lights">Lights</option>
+                <option value="full">All</option>
+              </select>
+            </div>
+            <!-- Channel Filter Selector for Plot Image & PDF Export -->
+            <div style="display:flex; align-items:center; gap:6px;">
+              <label for="exportChannelFilter" style="font-size:0.76rem; font-weight:700; color:var(--accent-cyan);">Plot Channel Filter:</label>
+              <select id="exportChannelFilter" class="form-control" style="width:165px; padding:6px 8px; font-size:0.8rem;" onchange="CineApp.onExportChannelFilterChange(this.value)">
+                <option value="all">Export All (الكل)</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <label for="exportPrintFormatSelect" style="font-size:0.76rem; font-weight:700; color:var(--accent-amber);">Print Size:</label>
+              <select id="exportPrintFormatSelect" class="form-control" style="width:145px; padding:6px 8px; font-size:0.8rem;">
+                <option value="A4">A4 Standard</option>
+                <option value="thermal80">Thermal Receipt 80mm</option>
+                <option value="thermal58">Thermal Receipt 58mm</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <label for="exportOrientationSelect" style="font-size:0.76rem; font-weight:700; color:#a78bfa;">اتجاه الورقة:</label>
+              <select id="exportOrientationSelect" class="form-control" style="width:130px; padding:6px 8px; font-size:0.8rem;" onchange="CineApp.onExportOrientationChange(this.value)">
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <label for="exportContentScopeSelect" style="font-size:0.76rem; font-weight:700; color:#fb7185;">هطبع إيه:</label>
+              <select id="exportContentScopeSelect" class="form-control" style="width:145px; padding:6px 8px; font-size:0.8rem;" onchange="CineApp.onExportContentScopeChange(this.value)">
+                <option value="sheet" selected>الشيت</option>
+                <option value="plot">صورة المشروع</option>
+                <option value="all">الكل</option>
+              </select>
+            </div>
+            <div style="display:flex; align-items:center; gap:6px;">
+              <label for="exportPlotModeSelect" style="font-size:0.76rem; font-weight:700; color:#34d399;">وضع صورة المخطط:</label>
+              <select id="exportPlotModeSelect" class="form-control" style="width:165px; padding:6px 8px; font-size:0.8rem;" onchange="CineApp.onExportPlotModeChange(this.value)">
+                <option value="fit_venue">على قد المبنى بالظبط</option>
+                <option value="current">الوضع الحالي كما هو</option>
+              </select>
+            </div>
+            <div class="dropdown-wrapper print-dropdown-wrap">
+              <button type="button" id="reportPrintMenuBtn" class="btn btn-primary print-dropdown-btn" onclick="CineApp.toggleReportPrintMenu(event)">
+                <span>🖨️ Print</span>
+                <span class="print-caret">▾</span>
+              </button>
+              <div id="reportPrintDropdownMenu" class="print-dropdown-menu hidden" onclick="event.stopPropagation()">
+                <button type="button" class="print-dropdown-item" onclick="CineApp.closeAllPrintMenus(); CineApp.printOrExportPDF()">
+                  <span>🖨️ Print / PDF (A4 / Thermal)</span>
+                  <span class="print-fmt-tag">Print</span>
+                </button>
+                <button type="button" class="print-dropdown-item" onclick="CineApp.closeAllPrintMenus(); CineApp.exportWordReport()">
+                  <span>📘 Word Document</span>
+                  <span class="print-fmt-tag">.doc</span>
+                </button>
+                <button type="button" class="print-dropdown-item" onclick="CineApp.closeAllPrintMenus(); CineApp.exportExcelWorkbook()">
+                  <span>📗 Excel Workbook</span>
+                  <span class="print-fmt-tag">.xls</span>
+                </button>
+                <div class="print-dropdown-divider"></div>
+                <button type="button" class="print-dropdown-item" onclick="CineApp.closeAllPrintMenus(); CineApp.exportPlotPNG('fit_venue')">
+                  <span>🏛️ صورة على قد المبنى</span>
+                  <span class="print-fmt-tag">.png</span>
+                </button>
+                <button type="button" class="print-dropdown-item" onclick="CineApp.closeAllPrintMenus(); CineApp.exportPlotPNG('current')">
+                  <span>🖼️ صورة للوضع الحالي</span>
+                  <span class="print-fmt-tag">.png</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Faithful Print Preview (Matches Actual Printed A4 Portrait/Landscape Sheet 1:1) -->
+        <div id="projectReportLiveWrap" class="project-report-live-wrap">
+          <div class="project-report-preview-bar">
+            <h4 id="reportDmxSectionHeading" style="color:var(--accent-amber); font-size:0.86rem; margin:0;">DMX Patch Sheet</h4>
+            <span id="projectPreviewOrientBadge" class="project-orient-pill">Portrait</span>
+          </div>
+          <div id="projectReportPreviewViewport" class="paper-preview-viewport project-report-preview-viewport">
+            <div id="projectReportZoomStage" class="paper-preview-zoom-stage">
+              <div id="projectLiveSheetSurface" class="paper-sheet-surface paper-orientation-portrait project-live-sheet-surface" dir="rtl"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Staging Tables Used by Sheet Builder & Excel Exporter -->
+        <div id="projectReportDataStaging" class="hidden">
+          <table class="report-table">
+            <thead>
+              <tr id="reportDmxTableHeadRow">
+                <th>Channel</th>
+                <th>Light Number</th>
+                <th>Fixture Model</th>
+                <th>Footprint (Ch)</th>
+                <th>Start Address</th>
+                <th>End Address</th>
+                <th>Dimmer %</th>
+                <th>Kelvin</th>
+                <th>Color</th>
+                <th>Watts</th>
+              </tr>
+            </thead>
+            <tbody id="reportDmxTableBody"></tbody>
+          </table>
+          <table class="report-table">
+            <thead>
+              <tr>
+                <th>Cam #</th>
+                <th>Camera Body</th>
+                <th>Lens</th>
+                <th>Zoom (mm)</th>
+                <th>Tripod</th>
+                <th>F-Stop</th>
+                <th>ISO</th>
+                <th>Shutter</th>
+                <th>Kelvin</th>
+                <th>ST Look (Con / Hi / Shd / Fade / Sat / Shp / Clr)</th>
+              </tr>
+            </thead>
+            <tbody id="reportCameraTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('reportsModal')">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- K. PROJECT CREW MODAL ("Crew") -->
+  <div id="projectCrewModal" class="modal-backdrop hidden">
+    <div class="modal-window" style="max-width:660px;" dir="rtl">
+      <div class="modal-header">
+        <h3>🎬 Crew</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('projectCrewModal')">✕</button>
+      </div>
+      <form onsubmit="CineApp.saveCrewModal(event)">
+        <div class="modal-body" style="display:flex; flex-direction:column; gap:14px;">
+          <p class="muted-text" style="font-size:0.8rem; margin:0;">
+            البيانات المكتوبة هنا فقط هي التي ستظهر في الشيت والطباعة — أي خانة تُترك فارغة لا تظهر.
+          </p>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label dir="ltr" style="text-align:right;">DOP</label>
+              <input type="text" id="crewDopInput" class="form-control" placeholder="DOP Name..." />
+            </div>
+            <div class="form-group">
+              <label dir="ltr" style="text-align:right;">Lighting Programmer</label>
+              <input type="text" id="crewProgrammerInput" class="form-control" placeholder="Lighting Programmer Name..." />
+            </div>
+            <div class="form-group">
+              <label>المخرج</label>
+              <input type="text" id="crewDirectorInput" class="form-control" placeholder="اسم المخرج..." />
+            </div>
+            <div class="form-group">
+              <label>مسؤول المعدات</label>
+              <input type="text" id="crewEquipMgrInput" class="form-control" placeholder="اسم مسؤول المعدات..." />
+            </div>
+          </div>
+
+          <div class="item-card" style="padding:12px;">
+            <h4 style="font-size:0.88rem; color:var(--accent-cyan); margin-bottom:8px;">📷 المصورين (حسب عدد الكاميرات بالمشهد)</h4>
+            <div id="crewOperatorsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+
+          <div class="item-card" style="padding:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+              <h4 style="font-size:0.88rem; color:var(--accent-amber); margin:0;">🛠️ الفنيين</h4>
+              <button type="button" class="btn btn-secondary" style="padding:4px 10px; font-size:0.76rem;" onclick="CineApp.addCrewTechnicianRow()">
+                ➕ إضافة فني
+              </button>
+            </div>
+            <div id="crewTechniciansList" style="display:flex; flex-direction:column; gap:8px;"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('projectCrewModal')">إلغاء</button>
+          <button type="submit" class="btn btn-primary">💾 حفظ البيانات</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- H. ADMIN ADD / EDIT USER & SECTION PERMISSIONS MODAL -->
+  <div id="userCrudModal" class="modal-backdrop hidden" style="z-index:1750;">
+    <div class="modal-window" style="max-width:760px;">
+      <div class="modal-header">
+        <h3 id="userCrudModalTitle">👥 إضافة / تعديل مستخدم وصلاحيات الأقسام (User &amp; Permissions)</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('userCrudModal')">✕</button>
+      </div>
+      <form onsubmit="CineApp.saveUserCrud(event)">
+        <div class="modal-body" dir="rtl" style="text-align:right;">
+          <input type="hidden" id="userCrudExistingKey" />
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label>اسم المستخدم (Username)</label>
+              <input type="text" id="userCrudUsername" class="form-control" placeholder="e.g. ahmed_dop" required />
+            </div>
+            <div class="form-group">
+              <label>الاسم الوظيفي / اللقب (Display Name)</label>
+              <input type="text" id="userCrudDisplayName" class="form-control" placeholder="e.g. Lighting Assistant" />
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label id="userCrudPasswordLabel">كلمة المرور (Password)</label>
+              <input type="text" id="userCrudPassword" class="form-control" placeholder="أدخل كلمة المرور..." />
+            </div>
+            <div class="form-group">
+              <label>نوع الحساب والصلاحية (User Role)</label>
+              <select id="userCrudRole" class="form-control" onchange="CineApp.onUserCrudRoleChange(this.value)">
+                <option value="Regular User">Regular User (مستخدم عادي بصلاحيات مخصصة)</option>
+                <option value="Admin">Admin (مدير بصلاحيات كاملة)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Granular Section Permissions Box for Regular Users -->
+          <div id="userCrudPermissionsBox" style="background:var(--bg-input); border:1px solid var(--border-subtle); border-right:3px solid var(--accent-cyan); border-radius:8px; padding:14px; margin-top:6px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
+              <strong style="font-size:0.86rem; color:var(--accent-cyan);">
+                صلاحيات جميع أقسام وأدوات البرنامج للمستخدم (Full Granular Permissions):
+              </strong>
+              <div style="display:flex; gap:6px;">
+                <button type="button" class="btn btn-secondary" style="padding:3px 9px; font-size:0.74rem;" onclick="CineApp.setAllUserModalPerms(true)">☑️ تحديد الكل</button>
+                <button type="button" class="btn btn-secondary" style="padding:3px 9px; font-size:0.74rem;" onclick="CineApp.setAllUserModalPerms(false)">⬜ إلغاء الكل</button>
+              </div>
+            </div>
+            <div id="userCrudPermChecklist" style="display:flex; flex-direction:column; gap:10px; font-size:0.82rem; max-height:42vh; overflow-y:auto; padding-left:4px;"></div>
+          </div>
+
+          <div id="userCrudErrorMsg" class="hidden" style="color:#ef4444; font-size:0.82rem; font-weight:700; margin-top:10px;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('userCrudModal')">إلغاء (Cancel)</button>
+          <button type="submit" class="btn btn-primary">💾 حفظ بيانات وصلاحيات المستخدم (Save User)</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- I. CHANGE PASSWORD / ADMIN PASSWORD RESET MODAL -->
+  <div id="changePasswordModal" class="modal-backdrop hidden" style="z-index:1750;">
+    <div class="modal-window" style="max-width:440px;">
+      <div class="modal-header">
+        <h3 id="changePassModalTitle">🔑 تغيير كلمة المرور (Change Password)</h3>
+        <button type="button" class="modal-close-btn" onclick="CineApp.closeModal('changePasswordModal')">✕</button>
+      </div>
+      <form onsubmit="CineApp.saveChangePassword(event)">
+        <div class="modal-body">
+          <input type="hidden" id="changePassTargetKey" />
+          <div style="font-size:0.84rem; color:var(--accent-amber); font-weight:700; margin-bottom:12px;" id="changePassUserLabel"></div>
+
+          <div id="changePassCurrentGroup" class="form-group">
+            <label>كلمة المرور الحالية (Current Password)</label>
+            <input type="password" id="changePassCurrentInput" class="form-control" placeholder="••••••••" />
+          </div>
+
+          <div class="form-group">
+            <label>كلمة المرور الجديدة (New Password)</label>
+            <input type="text" id="changePassNewInput" class="form-control" placeholder="أدخل كلمة المرور الجديدة" required />
+          </div>
+
+          <div id="changePassErrorMsg" class="hidden" style="color:#ef4444; font-size:0.82rem; font-weight:700; margin-top:8px;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="CineApp.closeModal('changePasswordModal')">إلغاء (Cancel)</button>
+          <button type="submit" class="btn btn-primary">💾 حفظ كلمة المرور الجديدة</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       5. PRINTABLE A4 REPORT CONTAINER (Used by Print / Export PDF)
+       ======================================================================== -->
+  <div id="printableReportArea"></div>
+
+  <!-- Toast Status Notification -->
+  <div id="toastBanner" class="toast-banner hidden"></div>
+
+  <!-- Core Application Scripts -->
+  <script src="./js/db.js?v=5.5"></script>
+  <script src="./js/vectors.js?v=5.5"></script>
+  <script src="./js/canvas-engine.js?v=5.5"></script>
+  <script src="./js/vendor/three.min.js?v=5.5"></script>
+  <script src="./js/three-view.js?v=5.5"></script>
+  <script src="./js/export-utils.js?v=5.5"></script>
+  <script src="./js/settings.js?v=5.5"></script>
+  <script src="./js/paper-project.js?v=5.5"></script>
+  <script src="./js/workspace-ui.js?v=5.5"></script>
+  <script src="./js/app.js?v=5.5"></script>
+</body>
+</html>

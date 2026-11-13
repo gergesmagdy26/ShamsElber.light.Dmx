@@ -1,0 +1,213 @@
+/* ============================================================================
+   ShamsElber light. DMX — PC-Grade 3D WebGL Visualizer Styles (three-view.css)
+   Linear / Stripe / Avolites Titan Dark Console Glassmorphism
+   ============================================================================ */
+
+.shams-3d-overlay-container {
+    position: absolute;
+     inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 12;
+    pointer-events: auto;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 35%, #111827 0%, #060911 75%, #030509 100%);
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+}
+
+.shams-3d-overlay-container.hidden {
+    display: none !important;
+}
+
+.shams-3d-canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+    outline: none;
+    touch-action: none;
+}
+
+/* Top Floating 3D Engineering HUD Bar */
+.shams-3d-hud-top {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 12px;
+    background: rgba(11, 15, 25, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+    max-width: calc(100vw - 24px);
+    overflow-x: auto;
+    scrollbar-width: none;
+}
+
+.shams-3d-hud-top::-webkit-scrollbar {
+    display: none;
+}
+
+.shams-3d-hud-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding-right: 6px;
+    border-right: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.shams-3d-hud-group:last-child {
+    border-right: none;
+    padding-right: 0;
+}
+
+.shams-3d-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    font-family: var(--font-sans, 'Cairo', sans-serif);
+    color: #cbd5e1;
+    background: rgba(30, 41, 59, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 8px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.18s ease;
+}
+
+.shams-3d-btn:hover {
+    color: #f8fafc;
+    background: rgba(51, 65, 85, 0.85);
+    border-color: rgba(56, 189, 248, 0.45);
+}
+
+.shams-3d-btn.active {
+    color: #090d16;
+    background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+    border-color: #7dd3fc;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.45);
+}
+
+.shams-3d-btn.blackout-btn.active {
+    color: #fef08a;
+    background: linear-gradient(135deg, #1e1b4b 0%, #090d16 100%);
+    border-color: #f59e0b;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.4);
+}
+
+.shams-3d-btn.camview-btn.active {
+    color: #ffffff;
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+    border-color: #fca5a5;
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+.shams-3d-select {
+    background: rgba(15, 23, 42, 0.9);
+    color: #e2e8f0;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    border-radius: 7px;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-family: var(--font-sans, 'Cairo', sans-serif);
+    outline: none;
+}
+
+/* Camera Viewfinder Frame Overlay (when looking through stage camera lens) */
+.shams-3d-cam-frame {
+    position: absolute;
+    inset: 58px 24px 48px 24px;
+    border: 2px solid rgba(239, 68, 68, 0.75);
+    border-radius: 6px;
+    pointer-events: none;
+    z-index: 16;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.42);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 12px 16px;
+}
+
+.shams-3d-cam-frame.hidden {
+    display: none !important;
+}
+
+.shams-3d-cam-frame-top,
+.shams-3d-cam-frame-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono, 'JetBrains Mono', monospace);
+    font-size: 11px;
+    color: #f8fafc;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.9);
+}
+
+.shams-3d-rec-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: rgba(220, 38, 38, 0.85);
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.shams-3d-rec-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ffffff;
+    animation: shamsRecBlink 1.1s infinite;
+}
+
+@keyframes shamsRecBlink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.25; }
+}
+
+/* Bottom status pill in 3D */
+.shams-3d-status-bar {
+    position: absolute;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    padding: 5px 14px;
+    border-radius: 999px;
+    background: rgba(11, 15, 25, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    color: #94a3b8;
+    font-size: 11px;
+    font-family: var(--font-sans, 'Cairo', sans-serif);
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+    .shams-3d-hud-top {
+        top: 8px;
+        padding: 4px 7px;
+        gap: 4px;
+    }
+    .shams-3d-btn {
+        padding: 4px 8px;
+        font-size: 10.5px;
+    }
+    .shams-3d-cam-frame {
+        inset: 52px 12px 42px 12px;
+    }
+}

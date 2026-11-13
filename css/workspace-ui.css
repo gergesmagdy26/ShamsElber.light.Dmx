@@ -1,0 +1,609 @@
+/* ============================================================================
+   ShamsElber light. DMX — Master UI/UX Redesign & Workspace Decluttering
+   Linear / Stripe / Tide Guide / Glassmorphism / Avolites Titan Console Theme
+   ============================================================================ */
+
+:root {
+    --titan-bg-deep: #060911;
+    --titan-bg-panel: rgba(13, 19, 33, 0.82);
+    --titan-bg-elevated: rgba(23, 32, 53, 0.86);
+    --titan-border-glow: rgba(56, 189, 248, 0.24);
+    --titan-border-subtle: rgba(148, 163, 184, 0.15);
+    --titan-accent-cyan: #38bdf8;
+    --titan-accent-amber: #f59e0b;
+    --titan-accent-indigo: #6366f1;
+    --titan-accent-emerald: #10b981;
+    --titan-shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+/* Global Glassmorphism & Linear/Stripe Polish */
+body:not(.light-theme) {
+    background: radial-gradient(circle at 18% 0%, #111a2e 0%, #070b14 55%, #04070d 100%);
+}
+
+body:not(.light-theme) .auth-card {
+    background: rgba(13, 19, 34, 0.94);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+body:not(.light-theme) .dash-header,
+body:not(.light-theme) .item-card,
+body:not(.light-theme) .modal-window {
+    background: rgba(13, 19, 34, 0.84);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    box-shadow: 0 14px 38px rgba(0, 0, 0, 0.48), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+}
+
+body:not(.light-theme) .dash-nav-card {
+    background: linear-gradient(145deg, rgba(19, 28, 49, 0.82) 0%, rgba(11, 17, 30, 0.9) 100%);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+body:not(.light-theme) .dash-nav-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(56, 189, 248, 0.45);
+    box-shadow: 0 10px 28px rgba(14, 165, 233, 0.16);
+}
+
+body:not(.light-theme) .dash-nav-card.active {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.18) 0%, rgba(14, 165, 233, 0.14) 100%);
+    border-color: rgba(245, 158, 11, 0.65);
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.18), 0 0 0 1px rgba(245, 158, 11, 0.25) inset;
+}
+
+/* Compact Small Gear Icon Button (⚙️) */
+.shams-compact-gear-btn {
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    padding: 0 !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.1rem !important;
+    background: rgba(30, 41, 59, 0.78) !important;
+    border: 1px solid rgba(56, 189, 248, 0.32) !important;
+    color: #f8fafc !important;
+    cursor: pointer !important;
+    transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease !important;
+    flex-shrink: 0;
+}
+
+.shams-compact-gear-btn:hover {
+    transform: rotate(35deg) scale(1.05);
+    border-color: #38bdf8 !important;
+    background: rgba(14, 165, 233, 0.25) !important;
+}
+
+.light-theme .shams-compact-gear-btn {
+    background: #e2e8f0 !important;
+    color: #0f172a !important;
+    border-color: rgba(15, 23, 42, 0.2) !important;
+}
+
+/* ============================================================================
+   SLIM WORKSPACE TOP HEADER BAR (Decluttered — Popovers NEVER clipped)
+   ============================================================================ */
+#workspaceUpperSection {
+    position: relative;
+    z-index: 60;
+    overflow: visible !important;
+}
+
+.shams-slim-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 7px 14px;
+    min-height: 48px;
+    background: rgba(9, 13, 24, 0.94);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-bottom: 2px solid rgba(56, 189, 248, 0.28);
+    position: relative;
+    z-index: 65;
+    overflow: visible !important;
+    transition: margin-top 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.22s ease;
+}
+
+.light-theme .shams-slim-topbar {
+    background: linear-gradient(90deg, #a7b8cc 0%, #b5c5d8 60%, #cbbca1 100%);
+    border-bottom: 2.5px solid #334155;
+}
+
+.shams-slim-left,
+.shams-slim-right {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex-shrink: 0;
+    overflow: visible !important;
+}
+
+.shams-slim-title-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 3px;
+}
+
+.shams-home-btn {
+    padding: 2px 10px !important;
+    font-size: 0.71rem !important;
+    line-height: 1.25 !important;
+    height: auto !important;
+    min-height: 22px !important;
+    justify-content: center !important;
+    border-radius: 7px !important;
+}
+
+.shams-slim-title-stack .project-title-badge,
+.shams-slim-title-stack .shams-topbar-proj-badge {
+    text-align: center;
+    font-size: 0.77rem;
+    padding: 2px 10px;
+    line-height: 1.3;
+}
+
+.shams-slim-right {
+    background: rgba(15, 23, 42, 0.45);
+    padding: 3px 6px;
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.shams-sidebar-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    font-weight: 800;
+    color: #f8fafc;
+    background: linear-gradient(135deg, #0284c7 0%, #2563eb 100%);
+    border: 1px solid rgba(125, 211, 252, 0.45);
+    box-shadow: 0 3px 10px rgba(2, 132, 199, 0.3);
+    cursor: pointer;
+    transition: all 0.18s ease;
+}
+
+.shams-sidebar-trigger-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-1px);
+}
+
+/* Pinned Tools Bar in the Slim Top Header — overflow: visible so dropdowns open cleanly! */
+.shams-pinned-tools-bar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex: 1;
+    overflow: visible !important;
+    padding: 3px 8px;
+    margin-inline: 4px;
+    border-inline: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.shams-pinned-tools-bar .btn,
+.shams-pinned-tools-bar .power-pill {
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    font-size: 0.77rem;
+}
+
+/* Ensure Show Info & Power Load Popovers Always Appear Above Everything */
+.dropdown-wrapper {
+    position: relative;
+    overflow: visible !important;
+}
+
+#showInfoDropdownMenu,
+#powerLoadPopover {
+    z-index: 9999 !important;
+}
+
+.shams-undo-redo-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    background: rgba(15, 23, 42, 0.65);
+    padding: 2px;
+    border-radius: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.shams-icon-btn {
+    background: transparent;
+    color: #e2e8f0;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 9px;
+    min-width: 30px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    font-weight: 800;
+    cursor: pointer;
+    pointer-events: auto;
+    transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.shams-icon-btn:hover:not(.is-disabled):not(:disabled) {
+    background: rgba(56, 189, 248, 0.22);
+    color: #38bdf8;
+}
+
+.shams-icon-btn:active {
+    transform: scale(0.94);
+}
+
+.shams-icon-btn.is-disabled,
+.shams-icon-btn:disabled {
+    opacity: 0.36;
+    cursor: pointer;
+}
+
+/* Power Pill Overload Red Warning (> Max Amps) */
+.power-pill.overload-danger {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.92) 0%, rgba(153, 27, 27, 0.95) 100%) !important;
+    color: #ffffff !important;
+    border-color: #fca5a5 !important;
+    box-shadow: 0 0 18px rgba(239, 68, 68, 0.65) !important;
+    animation: shamsAmpOverloadPulse 1.2s infinite;
+}
+
+@keyframes shamsAmpOverloadPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+}
+
+/* ============================================================================
+   RIGHT-SIDE COLLAPSIBLE TOOLS DRAWER (القايمة المجمعة على اليمين)
+   While Add to Plot (#equipmentDrawer) stays fixed on the Left (شمال)
+   and Scenes Bar (.scenes-bar) stays at the Top (فوق)
+   ============================================================================ */
+.shams-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(2, 6, 14, 0.42);
+    backdrop-filter: blur(3px);
+    z-index: 88;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.24s ease;
+}
+
+.shams-sidebar-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.shams-workspace-sidebar {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: auto;
+    bottom: 0;
+    width: 330px;
+    max-width: 88vw;
+    background: rgba(10, 15, 28, 0.95);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border-left: 1px solid rgba(56, 189, 248, 0.28);
+    box-shadow: -16px 0 48px rgba(0, 0, 0, 0.72);
+    z-index: 90;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(104%);
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    color: #e2e8f0;
+    direction: rtl;
+}
+
+.light-theme .shams-workspace-sidebar {
+    background: rgba(255, 255, 255, 0.96);
+    color: #0f172a;
+    border-left: 1px solid rgba(15, 23, 42, 0.15);
+}
+
+.shams-workspace-sidebar.open {
+    transform: translateX(0);
+}
+
+.shams-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+    background: rgba(15, 23, 42, 0.55);
+}
+
+.shams-sidebar-header-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #38bdf8;
+}
+
+.shams-sidebar-scroll {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: visible;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.shams-sidebar-section {
+    background: rgba(19, 28, 46, 0.62);
+    border: 1px solid rgba(148, 163, 184, 0.14);
+    border-radius: 11px;
+    padding: 10px;
+}
+
+.light-theme .shams-sidebar-section {
+    background: #dde5ef;
+    border-color: #b4c2d3;
+}
+
+.shams-sidebar-sec-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #94a3b8;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.shams-tools-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 7px;
+}
+
+.shams-tools-grid .btn,
+.shams-tools-grid .dropdown-wrapper,
+.shams-tools-grid .power-pill {
+    width: 100%;
+    justify-content: center;
+    font-size: 0.76rem;
+    padding: 7px 8px;
+}
+
+/* Fixed Bottom Footer in Right Sidebar with Compact Gear Icon ⚙️ */
+.shams-sidebar-footer {
+    padding: 8px 12px;
+    border-top: 1px solid rgba(56, 189, 248, 0.18);
+    background: rgba(8, 12, 22, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.light-theme .shams-sidebar-footer {
+    background: #cfd9e5;
+}
+
+/* Project Settings Modal Checklist & Sliders */
+.shams-pin-checklist {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.shams-pin-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 8px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease;
+}
+
+.shams-pin-item:hover {
+    border-color: rgba(56, 189, 248, 0.45);
+}
+
+/* Dedicated Minimize / Restore Button positioning */
+.upper-toggle-btn {
+    z-index: 35 !important;
+    background: rgba(11, 16, 29, 0.86) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(56, 189, 248, 0.35) !important;
+    color: #f8fafc !important;
+    font-weight: 700 !important;
+}
+
+/* Ana Vodafone Inspired Light Mode for Workspace UI & Sidebar */
+body.light-theme .shams-slim-topbar {
+    background: #ffffff !important;
+    border-top: 3px solid #e60000 !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-theme .shams-slim-right {
+    background: #f5f5f5;
+    border: 1px solid #e2e2e2;
+}
+
+body.light-theme .shams-undo-redo-group {
+    background: #ffffff;
+    border: 1px solid #dcdcdc;
+}
+
+body.light-theme .shams-icon-btn {
+    color: #1a1a1a;
+}
+
+body.light-theme .shams-icon-btn:hover:not(.is-disabled):not(:disabled) {
+    background: #fff1f2;
+    color: #e60000;
+}
+
+body.light-theme .shams-pinned-tools-bar {
+    border-inline-color: #e5e5e5;
+}
+
+body.light-theme .shams-topbar-proj-badge {
+    background: #fff5f5 !important;
+    border: 1px solid #fecaca !important;
+    color: #b91c1c !important;
+    font-weight: 800 !important;
+}
+
+body.light-theme .shams-sidebar-trigger-btn {
+    background: linear-gradient(135deg, #e60000, #c80000) !important;
+    border: 1px solid #c80000 !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    box-shadow: 0 3px 10px rgba(230, 0, 0, 0.22) !important;
+}
+
+body.light-theme .shams-compact-gear-btn {
+    background: #ffffff !important;
+    color: #1a1a1a !important;
+    border: 1px solid #dcdcdc !important;
+}
+
+body.light-theme .shams-workspace-sidebar {
+    background: #f4f4f4 !important;
+    border-left: 1px solid #e2e2e2 !important;
+    box-shadow: -12px 0 36px rgba(0, 0, 0, 0.10) !important;
+    color: #1a1a1a !important;
+}
+
+body.light-theme .shams-sidebar-header {
+    background: #ffffff !important;
+    border-top: 3px solid #e60000 !important;
+    border-bottom: 1px solid #e5e5e5 !important;
+}
+
+body.light-theme .shams-sidebar-header-title,
+body.light-theme .shams-sidebar-header h3 {
+    color: #e60000 !important;
+    font-weight: 800 !important;
+}
+
+body.light-theme .shams-sidebar-section {
+    background: #ffffff !important;
+    border: 1px solid #e5e5e5 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-theme .shams-sidebar-sec-title {
+    color: #333333 !important;
+    border-bottom: 1px solid #ebebeb !important;
+    padding-bottom: 6px;
+    font-weight: 800 !important;
+}
+
+body.light-theme .shams-sidebar-footer {
+    background: #ffffff !important;
+    border-top: 1px solid #e5e5e5 !important;
+}
+
+body.light-theme .shams-pin-item {
+    background: #fafafa !important;
+    border: 1px solid #e2e2e2 !important;
+    color: #1a1a1a !important;
+    font-weight: 700 !important;
+}
+
+body.light-theme .upper-toggle-btn {
+    background: #ffffff !important;
+    border: 1px solid #dcdcdc !important;
+    color: #1a1a1a !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06) !important;
+}
+
+@media (max-width: 768px) {
+    .shams-slim-topbar {
+        flex-wrap: wrap;
+        padding: 6px 8px;
+        min-height: 42px;
+        gap: 6px;
+    }
+    .shams-slim-left {
+        order: 1;
+        flex: 1 1 auto;
+        min-width: 0;
+    }
+    .shams-slim-left .project-title-badge,
+    .shams-topbar-proj-badge {
+        max-width: 145px;
+        font-size: 0.76rem;
+        padding: 4px 8px;
+    }
+    .shams-slim-right {
+        order: 2;
+        flex-shrink: 0;
+        gap: 4px;
+    }
+    .shams-pinned-tools-bar {
+        order: 3;
+        flex: 1 1 100%;
+        width: 100%;
+        flex-wrap: nowrap;
+        overflow-x: auto !important;
+        overflow-y: visible !important;
+        -webkit-overflow-scrolling: touch;
+        gap: 5px;
+        padding: 5px 2px 2px;
+        border-top: 1px solid rgba(148, 163, 184, 0.18);
+    }
+    body.light-theme .shams-pinned-tools-bar {
+        border-top-color: rgba(15, 23, 42, 0.14);
+    }
+    .shams-pinned-tools-bar .btn,
+    .shams-pinned-tools-bar .power-pill {
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 5px 8px;
+        font-size: 0.73rem;
+    }
+    .shams-sidebar-trigger-btn {
+        padding: 5px 9px;
+        font-size: 0.74rem;
+    }
+    .shams-icon-btn,
+    .shams-compact-gear-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 0.85rem;
+    }
+    .scenes-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 4px 8px;
+    }
+    .scenes-bar > div:last-child {
+        flex-shrink: 0;
+    }
+}
